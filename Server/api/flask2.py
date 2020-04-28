@@ -1,12 +1,7 @@
 #!flask/bin/python
 from flask import Flask, jsonify,request,json,flash,redirect,render_template
 from werkzeug.utils import secure_filename
-from flask_wtf.file import FileField,FileRequired
-from flask_wtf import FlaskForm
-import logging
-
-from werkzeug.datastructures import CombinedMultiDict
-import flask
+from random import randint
 
 app = Flask(__name__, template_folder='D:/PythonProgram/Server/api')
 
@@ -20,14 +15,15 @@ def upload():
 def uploader():
     if request.method == 'POST':
 
-        print(flask.request.data)
-        print(request.get_data)
-        description = request.form['description']
-        print(description)
-        uploaded_file = request.files.getlist('fi')
-        print(uploaded_file)
+        if 'parts' not in request.files:
+            print('no file part')
+        for file in request.files.getlist('parts'):
+            filename = secure_filename(file.filename)
+            file.save(filename)
+        print(request.form['description'])
+        
     
-    return description
+    return "lol"
 
 @app.route('/test/user',methods=['GET','POST'])
 def test():
@@ -44,8 +40,9 @@ def test():
             'email':email,
             'age':age,
             'topics':subject,
-            'id':453
+            'id':randint(0,9999)
         }
+        print(response['id'])
         
         return jsonify(response)
 
